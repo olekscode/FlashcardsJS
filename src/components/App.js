@@ -7,41 +7,17 @@ function randomChoice(array) {
 }
 
 class Card extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      source: props.source,
-      target: props.target
-    };
-  }
-
-  setCard(source, target) {
-    this.setState({
-      source: source,
-      target: target
-    });
-  }
-
   render() {
     return (
-      <div>{this.state.source} - {this.state.target}</div>
+      <div>{this.props.source} - {this.props.target}</div>
     );
   }
 }
 
 class Box extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {numberOfCards: props.numberOfCards};
-  }
-
-  setNumberOfCards(n) {
-    this.setState({numberOfCards: n});
-  }
-
   render() {
     return (
-      <div>Box: {this.state.numberOfCards}</div>
+      <div>Box: {this.props.numberOfCards}</div>
     );
   }
 }
@@ -49,13 +25,19 @@ class Box extends React.Component {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.boxes = boxes;
-    this.boxRefs = this.boxes.map(box => React.createRef());
-    this.cardRef = React.createRef();
+    this.state = {
+      boxes: boxes,
+      card: {source: undefined, target: undefined}
+    };
+  }
+
+  componentDidMount() {
+    this.showRandomCard();
   }
 
   randomNonEmptyBox() {
-    return randomChoice(this.boxes.filter(box => box.cards.length));
+    const nonEmptyBoxes = this.state.boxes.filter(box => box.cards.length);
+    return randomChoice(nonEmptyBoxes);
   }
 
   randomCardFromBox(box) {
@@ -68,37 +50,32 @@ class App extends React.Component {
   }
 
   addCard(source, target) {
-    this.boxes[0].cards.push({
-      source: source,
-      target: target
+    this.setState(state => {
+      state.boxes[0].cards.push({
+        source: source,
+        target: target
+      });
+
+      return {boxes: state.boxes};
     });
-    this.boxRefs[0].current.setNumberOfCards(this.boxes[0].cards.length);
   }
 
   showRandomCard() {
-    const card = this.randomCard();
-    this.cardRef.current.setCard(card.source, card.target);
+    this.setState({card: this.randomCard()});
   }
 
   render() {
-    const randomCard = this.randomCardFromBox(this.randomNonEmptyBox());
-
     return (
       <div>
-        {this.boxes.map((box, i) =>
-          <Box key={i} ref={this.boxRefs[i]} numberOfCards={box.cards.length} />
+        {this.state.boxes.map((box, i) =>
+          <Box key={i} numberOfCards={box.cards.length} />
         )}
-        <Card ref={this.cardRef} source={randomCard.source} target={randomCard.target} />
+        <Card source={this.state.card.source} target={this.state.card.target} />
         <button onClick={() => this.addCard("hello", "world")}>Add Card</button>
         <button onClick={() => this.showRandomCard()}>Refresh Card</button>
       </div>
     );
   }
 }
-
-// <div style={{border: "1px solid black"}}>
-//   {this.randomNonEmptyBox().randomCard().view()}
-// </div>
-// <button onClick={() => this.add("hello", "world")}>Add Card</button>
 
 export default App;

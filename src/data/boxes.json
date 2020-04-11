@@ -1,6 +1,6 @@
 [
   {
-    "number": "1",
+    "probability": "0.5",
     "cards": [
       {
         "source": "bonjour",
@@ -13,7 +13,7 @@
     ]
   },
   {
-    "number": "2",
+    "probability": "0.3",
     "cards": [
       {
         "source": "pomme",
@@ -22,15 +22,15 @@
     ]
   },
   {
-    "number": "3",
+    "probability": "0.15",
     "cards": []
   },
   {
-    "number": "4",
+    "probability": "0.04",
     "cards": []
   },
   {
-    "number": "5",
+    "probability": "0.01",
     "cards": []
   }
 ]
