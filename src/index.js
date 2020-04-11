@@ -1,11 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import FlipcardsApp from './components/FlipcardsApp';
+
 import './style.css';
-import App from './components/App';
+import boxes from "./data/boxes.json";
+
+const useStrictMode = true;
+let app = <FlipcardsApp boxes={boxes} />;
+
+if (useStrictMode) {
+  app = (<React.StrictMode>
+    {app}
+  </React.StrictMode>);
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  app,
   document.getElementById('root')
 );
