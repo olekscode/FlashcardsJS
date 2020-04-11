@@ -1,7 +1,9 @@
 import React from "react";
 import Box from "./Box";
-import AddCardForm from "./AddCardForm";
 import BoxModel from "../models/BoxModel";
+import AddCardForm from "./AddCardForm";
+import SelectDefinitionExercise from "./SelectDefinitionExercise";
+import MatchCardsExercise from "./MatchCardsExercise";
 import {weightedRandomChoice} from "../util/random";
 
 
@@ -26,15 +28,24 @@ class FlipcardsApp extends React.Component {
     });
   }
 
-  randomNonEmptyBox() {
+  chooseRandomNonEmptyBox() {
     const nonEmptyBoxes = this.boxes.filter(box => !box.isEmpty());
     const probabilities = nonEmptyBoxes.map(box => box.probability);
     return weightedRandomChoice(nonEmptyBoxes, probabilities);
   }
 
-  randomCard() {
-    const box = this.randomNonEmptyBox();
+  chooseRandomCard() {
+    const box = this.chooseRandomNonEmptyBox();
     return box.chooseRandomCard();
+  }
+
+  chooseRandomCards(numberOfCards) {
+    const randomCards = [];
+
+    for (let i = 0; i < numberOfCards; ++i) {
+      randomCards.push(this.chooseRandomCard());
+    }
+    return randomCards;
   }
 
   validateNewCard(card) {
@@ -91,10 +102,19 @@ class FlipcardsApp extends React.Component {
         {this.state.boxSizes.map((boxSize, i) =>
           <Box key={i} numberOfCards={boxSize} />
         )}
-        <AddCardForm onSubmit={(card) => this.addCard(card)} />
+
+        <AddCardForm
+          onSubmit={(card) => this.addCard(card)} />
+
+        <MatchCardsExercise
+          cards={this.chooseRandomCards(5)} />
       </div>
     );
   }
 }
+
+// <SelectDefinitionExercise
+//   sourceCard={this.chooseRandomCard()}
+//   falseTargets={this.chooseRandomCards(4).map(card => card.target)} />
 
 export default FlipcardsApp;
