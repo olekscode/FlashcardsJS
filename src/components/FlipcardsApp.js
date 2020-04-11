@@ -39,11 +39,35 @@ class FlipcardsApp extends React.Component {
     return box.chooseRandomCard();
   }
 
-  chooseRandomCards(numberOfCards) {
+  chooseRandomCardsWithoutRepetition(numberOfCards) {
+    const weightedCards = this.boxes.map(box =>
+      box.cards.map(card => ({
+        card: card,
+        weight: box.probability
+      }))).flat();
+
+    const uniqueWeightedCards = weightedCards.reduce((unique, item) =>
+      unique.some(_item => _item.card.source === item.card.source)
+      ? unique
+      : [...unique, item], []);
+
+    const uniqueCards = uniqueWeightedCards.map(item => item.card);
+    const weights = uniqueWeightedCards.map(item => item.weight);
+
+    if (uniqueCards.length <= numberOfCards)
+      return uniqueCards;
+
+    let randomCard, randomCardIndex;
     const randomCards = [];
 
     for (let i = 0; i < numberOfCards; ++i) {
-      randomCards.push(this.chooseRandomCard());
+      randomCard = weightedRandomChoice(uniqueCards, weights);
+      randomCards.push(randomCard);
+
+      // Remove the card that was selected
+      randomCardIndex = uniqueCards.indexOf(randomCard);
+      uniqueCards.splice(randomCardIndex, 1);
+      weights.splice(randomCardIndex, 1);
     }
     return randomCards;
   }
@@ -107,7 +131,8 @@ class FlipcardsApp extends React.Component {
           onSubmit={(card) => this.addCard(card)} />
 
         <MatchCardsExercise
-          cards={this.chooseRandomCards(5)} />
+          cards={this.chooseRandomCardsWithoutRepetition(10)}
+          onSubmit={(cards) => this.handleExerciseResult(cards)} />
       </div>
     );
   }

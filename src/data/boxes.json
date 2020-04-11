@@ -9,6 +9,38 @@
       {
         "source": "bonsoir",
         "target": "good evening"
+      },
+      {
+        "source": "amour",
+        "target": "love"
+      },
+      {
+        "source": "poisson",
+        "target": "fish"
+      },
+      {
+        "source": "nuit",
+        "target": "night"
+      },
+      {
+        "source": "rouge",
+        "target": "red"
+      },
+      {
+        "source": "chemin",
+        "target": "way"
+      },
+      {
+        "source": "livre",
+        "target": "book"
+      },
+      {
+        "source": "fille",
+        "target": "girl"
+      },
+      {
+        "source": "aiguë",
+        "target": "sharp"
       }
     ]
   },
