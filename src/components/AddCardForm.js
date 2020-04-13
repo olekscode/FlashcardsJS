@@ -1,4 +1,5 @@
 import React from "react";
+import {Redirect} from "react-router-dom";
 
 class AddCardForm extends React.Component {
   constructor(props) {
@@ -6,7 +7,8 @@ class AddCardForm extends React.Component {
 
     this.state = {
       source: "",
-      target: ""
+      target: "",
+      redirectToDashboard: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -20,6 +22,7 @@ class AddCardForm extends React.Component {
     catch(exception) {
       alert(exception);
     }
+    this.setState({redirectToDashboard: true});
     event.preventDefault();
   }
 
@@ -30,6 +33,10 @@ class AddCardForm extends React.Component {
   }
 
   render() {
+    if (this.state.redirectToDashboard) {
+      return <Redirect to="/" />
+    }
+
     return (
       <form onSubmit={this.handleSubmit}>
         <label>

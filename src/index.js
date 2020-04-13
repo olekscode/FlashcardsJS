@@ -5,7 +5,7 @@ import FlipcardsApp from './components/FlipcardsApp';
 import './style.css';
 import boxes from "./data/boxes.json";
 
-const useStrictMode = true;
+const useStrictMode = false;
 let app = <FlipcardsApp boxes={boxes} />;
 
 if (useStrictMode) {

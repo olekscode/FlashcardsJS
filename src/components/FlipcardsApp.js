@@ -1,4 +1,12 @@
 import React from "react";
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom';
+
 import Box from "./Box";
 import BoxModel from "../models/BoxModel";
 import AddCardForm from "./AddCardForm";
@@ -14,12 +22,8 @@ class FlipcardsApp extends React.Component {
       new BoxModel(box.cards, parseFloat(box.probability)));
 
     this.state = {
-      boxSizes: this.boxes.map(() => 0)
+      boxSizes: this.boxes.map(box => box.numberOfCards)
     };
-  }
-
-  componentDidMount() {
-    this.updateBoxSizes();
   }
 
   updateBoxSizes() {
@@ -90,6 +94,7 @@ class FlipcardsApp extends React.Component {
   }
 
   moveCard(card, fromBoxNumber, toBoxNumber) {
+    console.log(`Moving card "${card.source}-${card.target}" from box ${fromBoxNumber} to box ${toBoxNumber}`);
     this.boxes[fromBoxNumber].removeCard(card);
     this.boxes[toBoxNumber].addCard(card);
 
@@ -103,6 +108,7 @@ class FlipcardsApp extends React.Component {
       return;
 
     const nextBoxNumber = currentBoxNumber + 1;
+    console.log(`Card "${card.source}-${card.target}" is in box ${currentBoxNumber}`);
     this.moveCard(card, currentBoxNumber, nextBoxNumber);
   }
 
@@ -116,24 +122,48 @@ class FlipcardsApp extends React.Component {
   }
 
   handleExerciseResult(cards) {
+    console.log(this.boxes);
     cards.passed.forEach(card => this.moveCardForward(card));
     cards.failed.forEach(card => this.moveCardBackward(card));
+    console.log(this.boxes);
   }
 
   render() {
+    console.log("Rendering App");
     return (
-      <div>
-        {this.state.boxSizes.map((boxSize, i) =>
-          <Box key={i} numberOfCards={boxSize} />
-        )}
-
-        <AddCardForm
-          onSubmit={(card) => this.addCard(card)} />
-
-        <MatchCardsExercise
-          cards={this.chooseRandomCardsWithoutRepetition(10)}
-          onSubmit={(cards) => this.handleExerciseResult(cards)} />
-      </div>
+      <Router>
+        <Switch>
+          <Route path="/add">
+            <AddCardForm
+              onSubmit={(card) => this.addCard(card)} />
+          </Route>
+          <Route path="/match">
+            <MatchCardsExercise
+              cards={this.chooseRandomCardsWithoutRepetition(10)}
+              onSubmit={(cards) => this.handleExerciseResult(cards)} />
+          </Route>
+          <Route path="/">
+            <div>
+              {this.state.boxSizes.map((boxSize, i) =>
+                <Box key={i} numberOfCards={boxSize} />
+              )}
+            </div>
+            <nav>
+              <ul>
+                <li>
+                  <Link to="/">Home</Link>
+                </li>
+                <li>
+                  <Link to="/add">Add Card</Link>
+                </li>
+                <li>
+                  <a href="match">Match Cards Exercise</a>
+                </li>
+              </ul>
+            </nav>
+          </Route>
+        </Switch>
+      </Router>
     );
   }
 }

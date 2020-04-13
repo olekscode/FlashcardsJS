@@ -1,4 +1,5 @@
 import React from "react";
+import {Redirect} from "react-router-dom";
 import {shuffle} from "../util/random";
 
 class ToggleButton extends React.Component {
@@ -12,6 +13,7 @@ class ToggleButton extends React.Component {
   }
 
   render() {
+    console.log("Rendering button");
     return (
       <button
         style={{color: this.props.active ? "red" : "black"}}
@@ -36,31 +38,34 @@ class MatchCardsExercise extends React.Component {
       activeSource: undefined,
       activeTarget: undefined,
       shuffledSources: shuffledSources,
-      shuffledTargets: shuffledTargets
+      shuffledTargets: shuffledTargets,
+      redirectToDashboard: false
     };
 
     this.result = {
       passed: new Set(),
       failed: new Set()
     };
+
+    console.log("Constructor end");
   }
 
   recordCorrectAnswer(card) {
     // If a card was already failed, it can't pass
     if (!this.result.failed.has(card))
       this.result.passed.add(card);
-    console.log(this.result);
   }
 
   recordWrongAnswer(card) {
     this.result.failed.add(card);
-    console.log(this.result);
   }
 
   checkAnswer(state, props, selectedSource, selectedTarget) {
     // Checking the answer
     const card = props.cards.find(_card =>
       _card.source === selectedSource);
+
+    console.log(props.cards);
 
     if (selectedTarget === card.target) {
       // Answer is correct
@@ -99,7 +104,7 @@ class MatchCardsExercise extends React.Component {
       }
     }, () => {
       if (!this.state.shuffledSources.length)
-        this.props.onSubmit(this.result);
+        this.submitResults();
     });
   }
 
@@ -116,11 +121,20 @@ class MatchCardsExercise extends React.Component {
       }
     }, () => {
       if (!this.state.shuffledSources.length)
-        this.props.onSubmit(this.result);
+        this.submitResults();
     });
   }
 
+  submitResults() {
+    this.props.onSubmit(this.result);
+    this.setState({redirectToDashboard: true});
+  }
+
   render() {
+    if (this.state.redirectToDashboard) {
+      return <Redirect to="/" />;
+    }
+
     return(
       <table>
         <tbody>
